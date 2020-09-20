@@ -45,7 +45,7 @@ chronic::drawables::timestamp::timestamp(int x, int y, const tm *t, int color) :
     digits[3].x = digits[2].x + number::width;
     digits[4].x = digits[3].x + number::width + 2;
 
-    const bool leap = (year % 4 == 0) && (year % 100 != 0);
+    const bool leap = (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
     const int days = leap? 366 : 365;
     const float percent = float(t->tm_yday) / float(days);
     progress.percent = percent;
