@@ -34,7 +34,7 @@ chronic::drawables::timestamp::timestamp(int x, int y, const tm *t, int color) :
         number(x, y, t->tm_min % 10, color),
     },
     year(t->tm_year + 1900),
-    month(t->tm_mon),
+    month(t->tm_mon + 1),
     day(t->tm_mday),
     weekday(t->tm_wday),
     color(color),
