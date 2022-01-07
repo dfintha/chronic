@@ -3,6 +3,7 @@
 #pragma once
 
 #include "constants.hpp"
+#include "weather.hpp"
 #include <ctime>
 
 namespace chronic {
@@ -30,6 +31,14 @@ namespace chronic {
 
             static constexpr int width = (number::width * 4 + 10) * 2;
             static constexpr int height = 1;
+        };
+
+        struct weather {
+            chronic::weather::information info;
+            int color;
+
+            weather(chronic::weather::information i, int color);
+            void draw();
         };
 
         struct timestamp {

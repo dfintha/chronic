@@ -1,9 +1,9 @@
 BINARY=bin/chronic
-OBJECTS=obj/constants.o obj/drawables.o obj/globals.o obj/program.o
+OBJECTS=obj/constants.o obj/drawables.o obj/globals.o obj/program.o obj/weather.o
 
-CXX=g++
-CXXFLAGS=-std=c++14 -Wall -Wextra -O2 -Iinclude
-LDFLAGS=-lncurses -pthread
+CXX=clang++
+CXXFLAGS=-std=c++14 -Wall -Wextra -O2 -Iinclude -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600
+LDFLAGS=-no-pie -lncursesw -lpthread -lcurl -latomic
 
 .PHONY: all clean
 
@@ -15,13 +15,13 @@ run: $(BINARY)
 $(BINARY): $(OBJECTS)
 	@mkdir -p bin
 	@printf "[L] $(BINARY)\n"
-	@$(CXX) $(OBJECTS) -o $(BINARY) $(LDFLAGS)
+	$(CXX) $(OBJECTS) -o $(BINARY) $(LDFLAGS)
 	@printf "[+] Build Succeeded!\n"
 
 obj/%.o: src/%.cpp
 	@mkdir -p obj
 	@printf "[C] $<\n"
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -rf bin obj

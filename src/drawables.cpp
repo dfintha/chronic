@@ -23,6 +23,89 @@ void chronic::drawables::number::draw() {
     }
 }
 
+static const char * weekday_to_string(int weekday) {
+    switch (weekday) {
+        case 1:
+            return "Monday";
+        case 2:
+            return "Tuesday";
+        case 3:
+            return "Wednesday";
+        case 4:
+            return "Thursday";
+        case 5:
+            return "Friday";
+        case 6:
+            return "Saturday";
+        case 0:
+        case 7:
+            return "Sunday";
+        default:
+            return "ERROR";
+    }
+}
+
+static const char * direction_to_compass_point(const char *direction) {
+    #define map_direction(key, value) if (strcmp(direction, key) == 0) return value
+
+    map_direction("", "None");
+    map_direction("↑", "North");
+    map_direction("↗", "Northeast");
+    map_direction("→", "East");
+    map_direction("↘", "Southeast");
+    map_direction("↓", "South");
+    map_direction("↙", "Southwest");
+    map_direction("←", "West");
+    map_direction("↖", "Northwest");
+
+    #undef map_direction
+
+    return "ERROR";
+}
+
+chronic::drawables::progressbar::progressbar(int x, int y, int n, int color) :
+    x(x),
+    y(y),
+    percent(double(n)),
+    color(color)
+{ }
+
+void chronic::drawables::progressbar::draw() {
+    constexpr const int full = progressbar::width - 2;
+    const int filled = int(full * percent);
+
+    attron(COLOR_PAIR(FGCOLOR(color)));
+    move(y, x + progressbar::width - 2);
+    addch('|');
+    move(y, x);
+    addch('|');
+    attroff(COLOR_PAIR(FGCOLOR(color)));
+
+    attron(COLOR_PAIR(BGCOLOR(color)));
+    for (int i = 0; i < filled; ++i)
+        addch(' ');
+    attroff(COLOR_PAIR(BGCOLOR(color)));
+}
+
+chronic::drawables::weather::weather(chronic::weather::information i, int color) : info(i), color(color) {
+}
+
+void chronic::drawables::weather::draw() {
+    if (chronic::globals::bold.load())
+        attron(A_BOLD);
+
+    attron(COLOR_PAIR(FGCOLOR(color)));
+
+    mvprintw(1, 2, "%s", info.location);
+    mvprintw(2, 2, "%s", info.condition);
+    mvprintw(3, 2, "Temperature: %d\u00B0C (%d\u00B0C)", info.temperature_real, info.temperature_feel);
+    mvprintw(4, 2, "Humidity: %d%%", info.humidity_percent);
+    mvprintw(5, 2, "Wind: %d km/h (%s)", info.wind_speed, direction_to_compass_point(info.wind_direction));
+
+    attroff(COLOR_PAIR(FGCOLOR(color)));
+    attroff(A_BOLD);
+}
+
 chronic::drawables::timestamp::timestamp(int x, int y, const tm *t, int color) :
     x(x),
     y(y),
@@ -49,28 +132,6 @@ chronic::drawables::timestamp::timestamp(int x, int y, const tm *t, int color) :
     const int days = leap ? 366 : 365;
     const double percent = double(t->tm_yday + 1) / double(days);
     progress.percent = percent;
-}
-
-static const char * weekday_to_string(int weekday) {
-    switch (weekday) {
-        case 1:
-            return "Monday";
-        case 2:
-            return "Tuesday";
-        case 3:
-            return "Wednesday";
-        case 4:
-            return "Thursday";
-        case 5:
-            return "Friday";
-        case 6:
-            return "Saturday";
-        case 0:
-        case 7:
-            return "Sunday";
-        default:
-            return "ERROR";
-    }
 }
 
 void chronic::drawables::timestamp::draw() {
@@ -108,28 +169,4 @@ void chronic::drawables::timestamp::draw() {
     progress.draw();
 
     attroff(A_BOLD);
-}
-
-chronic::drawables::progressbar::progressbar(int x, int y, int n, int color) :
-    x(x),
-    y(y),
-    percent(double(n)),
-    color(color)
-{ }
-
-void chronic::drawables::progressbar::draw() {
-    constexpr const int full = progressbar::width - 2;
-    const int filled = int(full * percent);
-
-    attron(COLOR_PAIR(FGCOLOR(color)));
-    move(y, x + progressbar::width - 2);
-    addch('|');
-    move(y, x);
-    addch('|');
-    attroff(COLOR_PAIR(FGCOLOR(color)));
-
-    attron(COLOR_PAIR(BGCOLOR(color)));
-    for (int i = 0; i < filled; ++i)
-        addch(' ');
-    attroff(COLOR_PAIR(BGCOLOR(color)));
 }

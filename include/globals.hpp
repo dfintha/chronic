@@ -2,6 +2,7 @@
 #define CHRONIC_GLOBALS_HEADER
 #pragma once
 
+#include "weather.hpp"
 #include <atomic>
 
 namespace chronic {
@@ -9,6 +10,7 @@ namespace chronic {
         extern std::atomic_int color;
         extern std::atomic_bool bold;
         extern std::atomic_bool exiting;
+        extern std::atomic<chronic::weather::information> weather;
     }
 }
 

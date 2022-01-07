@@ -1,11 +1,13 @@
 #include "drawables.hpp"
 #include "globals.hpp"
 #include <chrono>
+#include <clocale>
 #include <ctime>
 #include <ncurses.h>
 #include <thread>
 
 static void initialize() {
+    setlocale(LC_ALL, "");
     initscr();
     noecho();
     curs_set(0);
@@ -35,16 +37,28 @@ static void initialize() {
 }
 
 void draw() {
+    static constexpr clock_t clocks_per_10min = CLOCKS_PER_SEC * 60 * 10;
+    static clock_t previous_timepoint;
+
     while (!chronic::globals::exiting.load()) {
         const auto now = time(nullptr);
         const auto *time  = localtime(&now);
+
+        clock_t current_timepoint = clock();
+        if (current_timepoint - previous_timepoint > clocks_per_10min) {
+            chronic::globals::weather.store(chronic::weather::query());
+            previous_timepoint = current_timepoint;
+        }
+
         const int x = COLS / 2 - chronic::drawables::timestamp::width / 2;
         const int y = LINES / 2 - chronic::drawables::timestamp::height / 2;
         const int color = chronic::globals::color.load();
         chronic::drawables::timestamp timestamp(x, y, time, color);
+        chronic::drawables::weather weatherstamp(chronic::globals::weather.load(), color);
 
         erase();
         timestamp.draw();
+        weatherstamp.draw();
         refresh();
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -53,6 +67,8 @@ void draw() {
 
 int main() {
     initialize();
+    chronic::globals::weather.store(chronic::weather::query());
+
     std::thread loop {draw};
 
     while (!chronic::globals::exiting.load()) {
