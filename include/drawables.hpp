@@ -22,7 +22,7 @@ namespace chronic {
 
         struct progressbar {
             int x, y;
-            float percent;
+            double percent;
             int color;
 
             progressbar(int x, int y, int n, int color);

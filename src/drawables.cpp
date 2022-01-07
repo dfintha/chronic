@@ -46,8 +46,8 @@ chronic::drawables::timestamp::timestamp(int x, int y, const tm *t, int color) :
     digits[4].x = digits[3].x + number::width + 2;
 
     const bool leap = (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
-    const int days = leap? 366 : 365;
-    const float percent = float(t->tm_yday) / float(days);
+    const int days = leap ? 366 : 365;
+    const double percent = double(t->tm_yday + 1) / double(days);
     progress.percent = percent;
 }
 
@@ -97,7 +97,7 @@ void chronic::drawables::timestamp::draw() {
     const int wy = y + timestamp::height - 4;
     mvprintw(wy, wx, "%s", buffer);
 
-    sprintf(buffer, "%d%% of %04d", int(progress.percent * 100), year);
+    sprintf(buffer, "%.2f%% of %04d", progress.percent * 100, year);
     const int yn = int(strlen(buffer));
     const int yx = x + timestamp::width / 2 - yn / 2;
     const int yy = y + timestamp::height - 2;
@@ -113,7 +113,7 @@ void chronic::drawables::timestamp::draw() {
 chronic::drawables::progressbar::progressbar(int x, int y, int n, int color) :
     x(x),
     y(y),
-    percent(float(n)),
+    percent(double(n)),
     color(color)
 { }
 
