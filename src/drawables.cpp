@@ -86,19 +86,19 @@ void chronic::drawables::timestamp::draw() {
     attron(COLOR_PAIR(FGCOLOR(color)));
 
     sprintf(buffer, "%04d-%02d-%02d", year, month, day);
-    const int dn = strlen(buffer);
+    const int dn = int(strlen(buffer));
     const int dx = x + timestamp::width / 2 - dn / 2;
     const int dy = y + timestamp::height - 5;
     mvprintw(dy, dx, "%s", buffer);
 
     sprintf(buffer, "%s", weekday_to_string(weekday));
-    const int wn = strlen(buffer);
+    const int wn = int(strlen(buffer));
     const int wx = x + timestamp::width / 2 - wn / 2;
     const int wy = y + timestamp::height - 4;
     mvprintw(wy, wx, "%s", buffer);
 
     sprintf(buffer, "%d%% of %04d", int(progress.percent * 100), year);
-    const int yn = strlen(buffer);
+    const int yn = int(strlen(buffer));
     const int yx = x + timestamp::width / 2 - yn / 2;
     const int yy = y + timestamp::height - 2;
     mvprintw(yy, yx, "%s", buffer);
@@ -113,7 +113,7 @@ void chronic::drawables::timestamp::draw() {
 chronic::drawables::progressbar::progressbar(int x, int y, int n, int color) :
     x(x),
     y(y),
-    percent(n),
+    percent(float(n)),
     color(color)
 { }
 
