@@ -2,7 +2,7 @@ BINARY=bin/chronic
 OBJECTS=obj/constants.o obj/drawables.o obj/globals.o obj/program.o obj/weather.o
 
 CXX=clang++
-CXXFLAGS=-std=c++14 -Wall -Wextra -O2 -Iinclude -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600
+CXXFLAGS=-std=c++14 -Wall -Wextra -O2 -Iinclude -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -D_REENTRANT
 LDFLAGS=-no-pie -lncursesw -lpthread -lcurl -latomic
 
 .PHONY: all clean
