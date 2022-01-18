@@ -39,3 +39,15 @@ During execution the following key bindings are in effect.
 - `7`: Set the color to white.
 - `B`: Toggle bold fonts.
 - `Q`: Quit `chronic`.
+
+## Configuration
+
+`chronic` can be configured by placing `.chronicrc` in the home directory. The
+syntax is simple, key-value pairs are separated by an equal sign (`=`). The
+following key-value pairs are supported.
+
+- `color`: Sets the foreground color of the drawn entities, it can be one of
+  the following: `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, or
+  `white`.
+- `bold`: Can be either `true` or `false`. If set to `true`, the text parts of
+  the entities will be displayed with bold font.

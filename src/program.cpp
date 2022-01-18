@@ -1,3 +1,4 @@
+#include "config.hpp"
 #include "drawables.hpp"
 #include "globals.hpp"
 #include "timer.hpp"
@@ -5,7 +6,10 @@
 #include <clocale>
 #include <ctime>
 #include <ncurses.h>
+#include <pwd.h>
+#include <sys/types.h>
 #include <thread>
+#include <unistd.h>
 
 static void initialize() {
     setlocale(LC_ALL, "");
@@ -35,6 +39,13 @@ static void initialize() {
         init_pair(26, COLOR_CYAN, -1);
         init_pair(27, COLOR_WHITE, -1);
     }
+}
+
+static std::string get_home_dir() {
+    const auto pw = getpwuid(getuid());
+    if (pw == nullptr)
+        return "";
+    return pw->pw_dir;
 }
 
 void draw() {
@@ -67,7 +78,10 @@ void draw() {
 
 int main() {
     initialize();
-    chronic::globals::weather.store(chronic::weather::query());
+    const std::string config_path = get_home_dir() + "/.chronicrc";
+    const chronic::config config = chronic::config::parse(config_path.c_str());
+    chronic::globals::color.store(config.get_color());
+    chronic::globals::bold.store(config.is_bold());
 
     std::thread loop {draw};
 
