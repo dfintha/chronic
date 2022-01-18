@@ -78,10 +78,16 @@ void draw() {
 
 int main() {
     initialize();
+
     const std::string config_path = get_home_dir() + "/.chronicrc";
     const chronic::config config = chronic::config::parse(config_path.c_str());
     chronic::globals::color.store(config.get_color());
     chronic::globals::bold.store(config.is_bold());
+
+    {
+        std::lock_guard<std::mutex> location_lock(chronic::globals::location_mutex);
+        chronic::globals::location = config.get_location();
+    }
 
     std::thread loop {draw};
 

@@ -1,3 +1,4 @@
+#include "globals.hpp"
 #include "weather.hpp"
 #include <cstdio>
 #include <cstring>
@@ -26,7 +27,16 @@ chronic::weather::information chronic::weather::query() {
         return failed_weather_info;
 
     std::vector<char> received;
-    curl_easy_setopt(curl, CURLOPT_URL, "https://wttr.in/?T&format=\"%l|%C|%t+%f+%h|%w\"");
+
+    {
+        std::lock_guard<std::mutex> location_lock(chronic::globals::location_mutex);
+        std::string url =
+            "https://wttr.in/" +
+            chronic::globals::location +
+            "?T&format=\"%l|%C|%t+%f+%h|%w\"";
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    }
+
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_to_string);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &received);
 

@@ -51,3 +51,12 @@ following key-value pairs are supported.
   `white`.
 - `bold`: Can be either `true` or `false`. If set to `true`, the text parts of
   the entities will be displayed with bold font.
+- `location`: The desired location to retrieve weather information for.
+
+### Example configuration
+
+```
+color=blue
+bold=true
+location=New York
+```
