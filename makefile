@@ -1,5 +1,5 @@
 BINARY=bin/chronic
-OBJECTS=obj/constants.o obj/drawables.o obj/globals.o obj/program.o obj/weather.o
+OBJECTS=obj/constants.o obj/drawables.o obj/globals.o obj/program.o obj/weather.o obj/timer.o
 
 CXX=clang++
 CXXFLAGS=-std=c++14 -Wall -Wextra -O2 -Iinclude -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -D_REENTRANT

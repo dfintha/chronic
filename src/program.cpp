@@ -1,5 +1,6 @@
 #include "drawables.hpp"
 #include "globals.hpp"
+#include "timer.hpp"
 #include <chrono>
 #include <clocale>
 #include <ctime>
@@ -37,31 +38,30 @@ static void initialize() {
 }
 
 void draw() {
-    static constexpr clock_t clocks_per_10min = CLOCKS_PER_SEC * 60 * 10;
-    static clock_t previous_timepoint;
+    using namespace std::chrono_literals;
+    chronic::oneshot_timer weather_update_timer(0s);
+    chronic::oneshot_timer timestamp_update_timer(0s);
 
     while (!chronic::globals::exiting.load()) {
-        const auto now = time(nullptr);
-        const auto *time  = localtime(&now);
-
-        clock_t current_timepoint = clock();
-        if (current_timepoint - previous_timepoint > clocks_per_10min) {
+        if (weather_update_timer.elapsed()) {
             chronic::globals::weather.store(chronic::weather::query());
-            previous_timepoint = current_timepoint;
+            weather_update_timer.set(10min);
+        } else if (timestamp_update_timer.elapsed()) {
+            const auto now = time(nullptr);
+            const auto *time  = localtime(&now);
+            const int x = COLS / 2 - chronic::drawables::timestamp::width / 2;
+            const int y = LINES / 2 - chronic::drawables::timestamp::height / 2;
+            const int color = chronic::globals::color.load();
+            chronic::drawables::timestamp timestamp(x, y, time, color);
+            chronic::drawables::weather weatherstamp(chronic::globals::weather.load(), color);
+            erase();
+            timestamp.draw();
+            weatherstamp.draw();
+            refresh();
+            timestamp_update_timer.set(1s);
+        } else {
+            continue;
         }
-
-        const int x = COLS / 2 - chronic::drawables::timestamp::width / 2;
-        const int y = LINES / 2 - chronic::drawables::timestamp::height / 2;
-        const int color = chronic::globals::color.load();
-        chronic::drawables::timestamp timestamp(x, y, time, color);
-        chronic::drawables::weather weatherstamp(chronic::globals::weather.load(), color);
-
-        erase();
-        timestamp.draw();
-        weatherstamp.draw();
-        refresh();
-
-        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
