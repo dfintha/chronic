@@ -1,0 +1,22 @@
+{
+    "name": "chronic",
+    "project_type": "executable",
+    "version": "0.1.0",
+    "c_standard": "c99",
+    "cpp_standard": "c++14",
+    "external_libraries": [
+        {
+            "type": "pkg_config",
+            "name": "ncurses"
+        },
+        {
+            "type": "pkg_config",
+            "name": "libcurl"
+        },
+        {
+            "type": "manual",
+            "cflags": "-D_REENTRANT",
+            "ldflags": "-lpthread -latomic"
+        }
+    ]
+}
