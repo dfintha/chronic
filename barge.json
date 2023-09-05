@@ -1,9 +1,9 @@
 {
     "name": "chronic",
+    "authors": ["Dénes Fintha <denes.fintha@gmail.com>"],
+    "description": "Simple terminal clock with weather and year percentages.",
     "project_type": "executable",
     "version": "0.1.0",
-    "c_standard": "c99",
-    "cpp_standard": "c++14",
     "external_libraries": [
         {
             "type": "pkg_config",
